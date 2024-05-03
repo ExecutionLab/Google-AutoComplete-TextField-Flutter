@@ -71,23 +71,22 @@ class _MyHomePageState extends State<MyHomePage> {
       padding: EdgeInsets.symmetric(horizontal: 20),
       child: GooglePlaceAutoCompleteTextField(
         textEditingController: controller,
-        googleAPIKey:"YOUR_GOOGLE_API_KEY",
+        googleAPIKey: "YOUR_GOOGLE_API_KEY",
         inputDecoration: InputDecoration(
           hintText: "Search your location",
           border: InputBorder.none,
           enabledBorder: InputBorder.none,
         ),
         debounceTime: 400,
-        countries: ["in", "fr"],
-        isLatLngRequired: false,
-        getPlaceDetailWithLatLng: (Prediction prediction) {
-          print("placeDetails" + prediction.lat.toString());
+        isLatLngRequired: true,
+        getPlaceDetail: (PlaceDetail detail) {
+          print("placeDetail: " + detail.toString());
         },
 
         itemClick: (Prediction prediction) {
-          controller.text = prediction.description ?? "";
-          controller.selection = TextSelection.fromPosition(
-              TextPosition(offset: prediction.description?.length ?? 0));
+          // controller.text = prediction.description ?? "";
+          // controller.selection =
+          //     TextSelection.fromPosition(TextPosition(offset: prediction.description?.length ?? 0));
         },
         seperatedBuilder: Divider(),
         containerHorizontalPadding: 10,
@@ -99,18 +98,16 @@ class _MyHomePageState extends State<MyHomePage> {
             child: Row(
               children: [
                 Icon(Icons.location_on),
-                SizedBox(
-                  width: 7,
-                ),
-                Expanded(child: Text("${prediction.description??""}"))
+                SizedBox(width: 7),
+                Expanded(
+                  child: Text("${prediction.mainText}\n${prediction.text}"),
+                )
               ],
             ),
           );
         },
 
         isCrossBtnShown: true,
-
-        // default 600 ms ,
       ),
     );
   }

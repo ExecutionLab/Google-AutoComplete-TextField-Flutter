@@ -1,157 +1,74 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
+import 'dart:convert';
+
+import 'package:flutter/material.dart';
+
 class PlacesAutocompleteResponse {
-  List<Prediction>? predictions;
-  String? status;
+  List<Prediction> predictions = [];
 
-  PlacesAutocompleteResponse({this.predictions, this.status});
+  PlacesAutocompleteResponse();
 
-  PlacesAutocompleteResponse.fromJson(Map<String, dynamic> json) {
-    if (json['predictions'] != null) {
-      predictions = [];
-      json['predictions'].forEach((v) {
-        predictions!.add(new Prediction.fromJson(v));
-      });
+  PlacesAutocompleteResponse.fromMap(Map<String, dynamic> map) {
+    if (map['suggestions'] != null) {
+      final List suggestions = map['suggestions'] ?? [];
+      predictions = suggestions.map((v) => Prediction.fromMap(v['placePrediction'])).toList();
     }
-    status = json['status'];
-  }
-
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    if (this.predictions != null) {
-      data['predictions'] = this.predictions!.map((v) => v.toJson()).toList();
-    }
-    data['status'] = this.status;
-    return data;
   }
 }
 
 class Prediction {
-  String? description;
-  String? id;
-  List<MatchedSubstrings>? matchedSubstrings;
-  String? placeId;
-  String? reference;
-  StructuredFormatting? structuredFormatting;
-  List<Terms>? terms;
-  List<String>? types;
-  String? lat;
-  String? lng;
+  final String placeId;
+  final String text;
+  final String mainText;
 
-  Prediction(
-      {this.description,
-      this.id,
-      this.matchedSubstrings,
-      this.placeId,
-      this.reference,
-      this.structuredFormatting,
-      this.terms,
-      this.types,
-      this.lat,
-      this.lng});
+  Prediction({
+    required this.placeId,
+    required this.text,
+    required this.mainText,
+  });
 
-  Prediction.fromJson(Map<String, dynamic> json) {
-    description = json['description'];
-    id = json['id'];
-    if (json['matched_substrings'] != null) {
-      matchedSubstrings = [];
-      json['matched_substrings'].forEach((v) {
-        matchedSubstrings!.add(new MatchedSubstrings.fromJson(v));
-      });
-    }
-    placeId = json['place_id'];
-    reference = json['reference'];
-    structuredFormatting = json['structured_formatting'] != null
-        ? new StructuredFormatting.fromJson(json['structured_formatting'])
-        : null;
-    if (json['terms'] != null) {
-      terms =[];
-      json['terms'].forEach((v) {
-        terms!.add(new Terms.fromJson(v));
-      });
-    }
-    types = json['types'].cast<String>();
-    lat = json['lat'];
-    lng = json['lng'];
-  }
-
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['description'] = this.description;
-    data['id'] = this.id;
-    if (this.matchedSubstrings != null) {
-      data['matched_substrings'] =
-          this.matchedSubstrings!.map((v) => v.toJson()).toList();
-    }
-    data['place_id'] = this.placeId;
-    data['reference'] = this.reference;
-    if (this.structuredFormatting != null) {
-      data['structured_formatting'] = this.structuredFormatting!.toJson();
-    }
-    if (this.terms != null) {
-      data['terms'] = this.terms!.map((v) => v.toJson()).toList();
-    }
-    data['types'] = this.types;
-    data['lat'] = this.lat;
-    data['lng'] = this.lng;
-
-    return data;
+  factory Prediction.fromMap(Map<String, dynamic> map) {
+    debugPrint("$map\n");
+    return Prediction(
+      placeId: map['placeId'] ?? "",
+      text: map['text']['text'] ?? "",
+      mainText: map['structuredFormat']['mainText']['text'] ?? "",
+    );
   }
 }
 
-class MatchedSubstrings {
-  int? length;
-  int? offset;
+class PlaceDetail {
+  final String id;
+  final String formattedAddress;
+  final Location location;
+  final String displayName;
 
-  MatchedSubstrings({this.length, this.offset});
+  PlaceDetail(
+      {required this.id,
+      required this.formattedAddress,
+      required this.location,
+      required this.displayName});
 
-  MatchedSubstrings.fromJson(Map<String, dynamic> json) {
-    length = json['length'];
-    offset = json['offset'];
-  }
-
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['length'] = this.length;
-    data['offset'] = this.offset;
-    return data;
-  }
-}
-
-class StructuredFormatting {
-  String? mainText;
-
-  String? secondaryText;
-
-  StructuredFormatting({this.mainText, this.secondaryText});
-
-  StructuredFormatting.fromJson(Map<String, dynamic> json) {
-    mainText = json['main_text'];
-
-    secondaryText = json['secondary_text'];
-  }
-
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['main_text'] = this.mainText;
-    data['secondary_text'] = this.secondaryText;
-    return data;
+  factory PlaceDetail.fromMap(Map<String, dynamic> map) {
+    return PlaceDetail(
+      id: map['id'] as String,
+      formattedAddress: map['formattedAddress'] as String,
+      location: Location.fromMap(map['location']),
+      displayName: map['displayName']['text'] as String,
+    );
   }
 }
 
-class Terms {
-  int? offset;
-  String? value;
+class Location {
+  final double latitude;
+  final double longitude;
 
-  Terms({this.offset, this.value});
+  Location({required this.latitude, required this.longitude});
 
-  Terms.fromJson(Map<String, dynamic> json) {
-    offset = json['offset'];
-    value = json['value'];
-  }
-
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['offset'] = this.offset;
-    data['value'] = this.value;
-    return data;
+  factory Location.fromMap(Map<String, dynamic> map) {
+    return Location(
+      latitude: map['latitude'] as double,
+      longitude: map['longitude'] as double,
+    );
   }
 }
