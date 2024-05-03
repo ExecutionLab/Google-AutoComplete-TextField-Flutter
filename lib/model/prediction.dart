@@ -28,7 +28,6 @@ class Prediction {
   });
 
   factory Prediction.fromMap(Map<String, dynamic> map) {
-    debugPrint("$map\n");
     return Prediction(
       placeId: map['placeId'] ?? "",
       text: map['text']['text'] ?? "",

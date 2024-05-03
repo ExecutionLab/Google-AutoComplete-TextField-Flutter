@@ -243,7 +243,8 @@ class _GooglePlaceAutoCompleteTextFieldState extends State<GooglePlaceAutoComple
   }
 
   Future<Response?> getPlaceDetailsFromPlaceId(Prediction prediction) async {
-    final url = "https://places.googleapis.com/v1/places/${prediction.placeId}";
+    final url =
+        "https://places.googleapis.com/v1/places/${prediction.placeId}?languageCode=${widget.languageCode}";
     Response response = await _dio.get(
       url,
       options: Options(
