@@ -32,10 +32,12 @@ class GooglePlaceAutoCompleteTextField extends StatefulWidget {
   bool showError;
   double? containerHorizontalPadding;
   double? containerVerticalPadding;
+  int? maxLength;
 
   GooglePlaceAutoCompleteTextField(
       {required this.textEditingController,
       required this.googleAPIKey,
+      this.maxLength,
       this.debounceTime = 600,
       this.inputDecoration = const InputDecoration(),
       this.itemClick,
@@ -92,6 +94,7 @@ class _GooglePlaceAutoCompleteTextFieldState extends State<GooglePlaceAutoComple
                 decoration: widget.inputDecoration,
                 style: widget.textStyle,
                 controller: widget.textEditingController,
+                maxLength: widget.maxLength,
                 onChanged: (string) {
                   subject.add(string);
                   if (widget.isCrossBtnShown) {
